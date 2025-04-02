@@ -1,19 +1,14 @@
 package com.example.apilist.data.model
 
-import com.example.apilist.data.model.cardData.ImageUris
-import com.example.apilist.data.model.cardData.Legalities
-import com.example.apilist.data.model.cardData.Preview
-import com.example.apilist.data.model.cardData.Prices
-import com.example.apilist.data.model.cardData.PurchaseUris
-import com.example.apilist.data.model.cardData.RelatedUris
-
-data class MtgCard(
+data class Card(
+    val all_parts: List<AllPart>,
     val arena_id: Int,
     val artist: String,
     val artist_ids: List<String>,
     val booster: Boolean,
     val border_color: String,
     val card_back_id: String,
+    val card_faces: List<CardFace>,
     val cardmarket_id: Int,
     val cmc: Int,
     val collector_number: String,
@@ -25,6 +20,7 @@ data class MtgCard(
     val flavor_text: String,
     val foil: Boolean,
     val frame: String,
+    val frame_effects: List<String>,
     val full_art: Boolean,
     val game_changer: Boolean,
     val games: List<String>,
@@ -32,12 +28,13 @@ data class MtgCard(
     val id: String,
     val illustration_id: String,
     val image_status: String,
-    val image_uris: ImageUris,
-    val keywords: List<Any>,
+    val image_uris: ImageUrisX,
+    val keywords: List<String>,
     val lang: String,
     val layout: String,
     val legalities: Legalities,
     val mana_cost: String,
+    val mtgo_foil_id: Int,
     val mtgo_id: Int,
     val multiverse_ids: List<Int>,
     val name: String,
@@ -47,10 +44,13 @@ data class MtgCard(
     val oracle_text: String,
     val oversized: Boolean,
     val penny_rank: Int,
+    val power: String,
     val preview: Preview,
     val prices: Prices,
     val prints_search_uri: String,
+    val produced_mana: List<String>,
     val promo: Boolean,
+    val promo_types: List<String>,
     val purchase_uris: PurchaseUris,
     val rarity: String,
     val related_uris: RelatedUris,
@@ -60,6 +60,7 @@ data class MtgCard(
     val rulings_uri: String,
     val scryfall_set_uri: String,
     val scryfall_uri: String,
+    val security_stamp: String,
     val `set`: String,
     val set_id: String,
     val set_name: String,
@@ -69,7 +70,9 @@ data class MtgCard(
     val story_spotlight: Boolean,
     val tcgplayer_id: Int,
     val textless: Boolean,
+    val toughness: String,
     val type_line: String,
     val uri: String,
-    val variation: Boolean
+    val variation: Boolean,
+    val watermark: String
 )

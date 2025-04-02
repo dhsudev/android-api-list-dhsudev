@@ -1,4 +1,4 @@
-package com.example.apilist.data.model.cardData
+package com.example.apilist.data.model
 
 data class Preview(
     val previewed_at: String,

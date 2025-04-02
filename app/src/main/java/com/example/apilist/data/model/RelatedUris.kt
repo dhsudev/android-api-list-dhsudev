@@ -1,4 +1,4 @@
-package com.example.apilist.data.model.cardData
+package com.example.apilist.data.model
 
 data class RelatedUris(
     val edhrec: String,

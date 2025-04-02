@@ -1,6 +1,6 @@
-package com.example.apilist.data.model.cardData
+package com.example.apilist.data.model
 
-data class ImageUris(
+data class ImageUrisX(
     val art_crop: String,
     val border_crop: String,
     val large: String,
