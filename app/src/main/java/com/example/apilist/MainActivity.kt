@@ -9,6 +9,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -54,24 +57,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            APIListTheme {
                 MyApp()
-            }
         }
     }
 }
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyApp() {
+    val vm: ListApiViewModel = viewModel()
+    val userSettings by vm.userSettings  // Obtén la configuración de usuario
+
+    if (userSettings == null) {
+        // Mostrar un indicador de carga mientras se obtiene la configuración
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    // Aplicar el tema dinámicamente basado en isDarkTheme
+    APIListTheme(darkTheme = userSettings!!.isDarkTheme) {
+        MainScaffold(vm = vm)  // Aquí usas la UI principal con el tema aplicado
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScaffold(vm: ListApiViewModel) {
     var selectedItem: Int by remember { mutableIntStateOf(0) }
+
     val items = listOf(
         NavigationItem("List", Icons.Default.Menu, Destinations.ListScreen, 0),
         NavigationItem("Favourites", Icons.Default.Favorite, Destinations.FavScreen, 1),
         NavigationItem("Settings", Icons.Default.Settings, Destinations.SettingsScreen, 2)
     )
     val navController = rememberNavController()
-    val vm: ListApiViewModel = viewModel()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -115,11 +140,11 @@ fun MyApp() {
             }
         },
         modifier = Modifier.fillMaxSize(),
-
-        ) { innerPadding ->
+    ) { innerPadding ->
         NavWrapper(navController, Modifier.padding(innerPadding), vm)
     }
 }
+
 
 
 

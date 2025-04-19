@@ -32,8 +32,14 @@ class ListApiViewModel : ViewModel() {
     var isListView by mutableStateOf(true)
         private set
 
+    private val _userSettings = mutableStateOf<UserSettings?>(null)
+    val userSettings = _userSettings
+
     init {
         fetchAllCards()
+        viewModelScope.launch {
+            userSettings.value = repository.getUserSettings() ?: UserSettings()
+        }
     }
 
     fun fetchAllCards() {
@@ -81,8 +87,6 @@ class ListApiViewModel : ViewModel() {
         }
     }
 
-    var userSettings = mutableStateOf(UserSettings())
-
     // Get user settings from the database
     fun getUserSettings() {
         viewModelScope.launch {
@@ -97,12 +101,12 @@ class ListApiViewModel : ViewModel() {
         }
     }
 
-    // Save user settings to the database
+
     fun saveUserSettings(settings: UserSettings) {
         viewModelScope.launch {
             try {
                 repository.saveUserSettings(settings)
-                Log.d("ViewModel", "User settings saved successfully")
+                _userSettings.value = settings
             } catch (e: Exception) {
                 Log.e("ViewModel", "Error saving user settings", e)
             }
