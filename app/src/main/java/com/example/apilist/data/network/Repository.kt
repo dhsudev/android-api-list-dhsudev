@@ -1,14 +1,17 @@
 package com.example.apilist.data.network
 
-import com.example.apilist.data.model.SearchData
+import com.example.apilist.data.model.ScryfallResponse
 import retrofit2.Response
 
 class Repository {
-    val api = ApiInterface.create()
+    private val api = ApiInterface.create()
     suspend fun getAllCards() = api.getAllCards()
+    suspend fun getMoreCards(urlNext : String) : ScryfallResponse{
+        return api.getMoreCards(urlNext)
+    }
     suspend fun getCardById(cardId : String) = api.getCardById(cardId)
     suspend fun autocomplete(name : String) = api.autocomplete(name)
-    suspend fun buildSearchQuery(name: String?, type: String?, color: String?, power: Int?): Response<SearchData> {
+    suspend fun buildSearchQuery(name: String?, type: String?, color: String?, power: Int?): ScryfallResponse {
         val queryParts = mutableListOf<String>()
 
         name?.let { queryParts.add("name:$it") }
@@ -18,5 +21,6 @@ class Repository {
 
         return api.searchCards(queryParts.joinToString("+"))
     }
+
 
 }
