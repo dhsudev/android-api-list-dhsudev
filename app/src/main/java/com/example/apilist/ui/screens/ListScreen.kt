@@ -41,8 +41,7 @@ import com.example.apilist.ui.utils.ImageWithCoil
 import com.example.apilist.ui.utils.FormatTextWithIcons
 
 @Composable
-fun ListScreen() {
-    val vm: ListApiViewModel = viewModel()
+fun ListScreen(vm : ListApiViewModel) {
     val cards = vm.cardList
     val isLoading = vm.isLoading
     val error = vm.errorMessage

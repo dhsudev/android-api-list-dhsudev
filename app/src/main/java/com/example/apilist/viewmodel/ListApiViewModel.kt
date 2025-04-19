@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.apilist.data.model.Card
+import com.example.apilist.data.model.local.UserSettings
 
 class ListApiViewModel : ViewModel() {
 
@@ -76,6 +77,46 @@ class ListApiViewModel : ViewModel() {
                 Log.e("API", "Error al cargar más cartas: ${e.message}")
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    var userSettings = mutableStateOf(UserSettings())
+
+    // Get user settings from the database
+    fun getUserSettings() {
+        viewModelScope.launch {
+            try {
+                val settings = repository.getUserSettings()
+                settings?.let {
+                    userSettings.value = it
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error getting user settings", e)
+            }
+        }
+    }
+
+    // Save user settings to the database
+    fun saveUserSettings(settings: UserSettings) {
+        viewModelScope.launch {
+            try {
+                repository.saveUserSettings(settings)
+                Log.d("ViewModel", "User settings saved successfully")
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error saving user settings", e)
+            }
+        }
+    }
+
+    // Clear favorites
+    fun clearFavorites() {
+        viewModelScope.launch {
+            try {
+                repository.clearFavorites()
+                Log.d("ViewModel", "Favorites cleared successfully")
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error clearing favorites", e)
             }
         }
     }

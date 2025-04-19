@@ -34,12 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.apilist.data.network.Repository
 import com.example.apilist.ui.navigation.Destinations
 import com.example.apilist.ui.navigation.NavWrapper
 import com.example.apilist.ui.navigation.NavigationItem
+import com.example.apilist.viewmodel.ListApiViewModel
 import com.example.compose.APIListTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +71,7 @@ fun MyApp() {
         NavigationItem("Settings", Icons.Default.Settings, Destinations.SettingsScreen, 2)
     )
     val navController = rememberNavController()
+    val vm: ListApiViewModel = viewModel()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -114,7 +117,7 @@ fun MyApp() {
         modifier = Modifier.fillMaxSize(),
 
         ) { innerPadding ->
-        NavWrapper(navController, Modifier.padding(innerPadding))
+        NavWrapper(navController, Modifier.padding(innerPadding), vm)
     }
 }
 
