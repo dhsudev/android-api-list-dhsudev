@@ -1,9 +1,7 @@
 package com.example.apilist.ui.utils
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -22,29 +20,44 @@ import com.example.apilist.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
-fun getColorFromCard(colors: List<String>?): Brush {
-    if (colors == null || colors.isEmpty()) {
-        return Brush.linearGradient(listOf(Color.LightGray, Color.LightGray))
-    }
+fun getColorFromCard(colors: List<String>?, isDarkMode: Boolean): List<Color> {
     val colorMap = mapOf(
-        "W" to Color(0xFFFFFDE7), // Blanco
-        "U" to Color(0xFFE3F2FD), // Azul
-        "B" to Color(0xFFAFAEAE), // Negro
-        "R" to Color(0xFFFFEBEE), // Rojo
-        "G" to Color(0xFFE8F5E9)  // Verde
+        "W" to Color(0xFFFFFDE7),
+        "U" to Color(0xFFE3F2FD),
+        "B" to Color(0xFFAFAEAE),
+        "R" to Color(0xFFFFEBEE),
+        "G" to Color(0xFFE8F5E9)
     )
+
+    if (colors.isNullOrEmpty()) {
+        return if (isDarkMode) {
+            listOf(Color.DarkGray)
+        } else {
+            listOf(Color.LightGray)
+        }
+    }
+
     val colorsInCard = colors.mapNotNull { colorMap[it] }
 
-    // Si solo hay un color, devolvemos un fondo sólido
-    if (colorsInCard.size == 1) {
-        return Brush.linearGradient(listOf(colorsInCard.first(), colorsInCard.first()))
+    return if (isDarkMode) {
+        colorsInCard.map { color ->
+            color.copy(alpha = 0.8f).copy(red = color.red * 0.8f, green = color.green * 0.8f, blue = color.blue * 0.8f)
+        }
+    } else {
+        colorsInCard
     }
-    return Brush.linearGradient(colorsInCard)
 }
+
+fun getBackgroundGradient(colors: List<Color>): Brush {
+    return if (colors.size == 1) {
+        Brush.linearGradient(listOf(colors.first(), colors.first()))
+    } else {
+        Brush.linearGradient(colors)
+    }
+}
+
+
 
 
 fun getManaIconResource(manaSymbol: String): Int {
@@ -107,7 +120,7 @@ fun getManaIconResource(manaSymbol: String): Int {
 }
 
 @Composable
-fun FormatTextWithIcons(str: String) {
+fun FormatTextWithIcons(str: String, textColor: Color) {
     val pattern = Regex("\\{(.*?)\\}")
     val lines = str.split("\n")
 
@@ -151,7 +164,8 @@ fun FormatTextWithIcons(str: String) {
             Text(
                 text = annotatedString,
                 inlineContent = inlineContentMap,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = textColor
             )
             if(lineIndex < lines.size - 1)
                 Spacer(Modifier.size(5.dp))

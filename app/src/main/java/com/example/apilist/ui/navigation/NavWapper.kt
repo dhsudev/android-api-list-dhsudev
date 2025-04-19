@@ -18,13 +18,21 @@ import com.example.apilist.viewmodel.ListApiViewModel
 fun NavWrapper(navController: NavHostController, modifier: Modifier, vm: ListApiViewModel) {
     NavHost(navController, ListScreen, modifier = modifier) {
         composable<Destinations.ListScreen> {
-            ListScreen(vm)
+            ListScreen(vm, navigateToDetail = { cardId ->
+                navController.navigate("detail_screen/$cardId")
+            })
         }
         composable<Destinations.FavScreen> {
             FavScreen(vm)
         }
         composable<Destinations.SettingsScreen> {
             SettingsScreen(vm)
+        }
+        composable("detail_screen/{cardId}") { backStackEntry ->
+            val cardId = backStackEntry.arguments?.getString("cardId")
+            cardId?.let {
+                DetailScreen(cardId = it, vm = vm)
+            }
         }
     }
 }

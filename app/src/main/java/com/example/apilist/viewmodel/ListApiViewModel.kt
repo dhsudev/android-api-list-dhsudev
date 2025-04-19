@@ -1,6 +1,7 @@
 package com.example.apilist.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,7 +34,7 @@ class ListApiViewModel : ViewModel() {
         private set
 
     private val _userSettings = mutableStateOf<UserSettings?>(null)
-    val userSettings = _userSettings
+    val userSettings : MutableState<UserSettings?> = _userSettings
 
     init {
         fetchAllCards()
