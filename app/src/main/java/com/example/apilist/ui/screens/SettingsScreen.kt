@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsScreen(navigateToNext: (String, String) -> Unit) {
+fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -20,5 +20,4 @@ fun SettingsScreen(navigateToNext: (String, String) -> Unit) {
         ) {
         Text("Settings Screen")
     }
-
 }
