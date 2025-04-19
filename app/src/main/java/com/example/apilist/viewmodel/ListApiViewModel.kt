@@ -1,49 +1,41 @@
 package com.example.apilist.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.apilist.data.network.Repository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.example.apilist.data.model.Card
 import com.example.apilist.data.model.local.UserSettings
+import com.example.apilist.data.network.Repository
+import kotlinx.coroutines.launch
 
 class ListApiViewModel : ViewModel() {
 
     private val repository = Repository()
-    private val nextPage = MutableLiveData<String?>()
 
     var cardList by mutableStateOf<List<Card>>(emptyList())
-        private set
-
-    var isLoading by mutableStateOf(false)
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    var isListView by mutableStateOf(true)
+    var isLoading by mutableStateOf(false)
         private set
 
-    private val _userSettings = mutableStateOf<UserSettings?>(null)
-    val userSettings : MutableState<UserSettings?> = _userSettings
+    var userSettings by mutableStateOf<UserSettings?>(null)
+        private set
+
+    var selectedCard by mutableStateOf<Card?>(null)
+        private set
+
+    private var nextPage by mutableStateOf<String?>(null)
 
     init {
         fetchAllCards()
-        viewModelScope.launch {
-            userSettings.value = repository.getUserSettings() ?: UserSettings()
-        }
+        getUserSettings()
     }
 
-    fun fetchAllCards() {
+    private fun fetchAllCards() {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
@@ -51,8 +43,8 @@ class ListApiViewModel : ViewModel() {
                 val response = repository.getAllCards()
                 Log.d("API", "Primera carga, cartas recibidas: ${response.data.size}")
                 cardList = response.data
-                nextPage.value = response.next_page
-                Log.d("API", "Siguiente página: ${response.next_page}")
+                nextPage = response.next_page
+                Log.d("API", "Siguiente página: $nextPage")
             } catch (e: Exception) {
                 errorMessage = "Error: ${e.message}"
                 Log.e("API", "Error al cargar las cartas: ${e.message}")
@@ -63,7 +55,7 @@ class ListApiViewModel : ViewModel() {
     }
 
     fun getMoreCards() {
-        val next = nextPage.value
+        val next = nextPage
         if (next == null || isLoading) {
             Log.d("API", "No hay más páginas o ya está cargando")
             return
@@ -76,9 +68,9 @@ class ListApiViewModel : ViewModel() {
                 Log.d("API", "Cargando más cartas desde: $next")
                 val response = repository.getMoreCards(next)
                 cardList = cardList + response.data
+                nextPage = response.next_page
                 Log.d("API", "Cartas añadidas: ${response.data.size}")
-                nextPage.value = response.next_page
-                Log.d("API", "Nueva siguiente página: ${response.next_page}")
+                Log.d("API", "Nueva siguiente página: $nextPage")
             } catch (e: Exception) {
                 errorMessage = "Error: ${e.message}"
                 Log.e("API", "Error al cargar más cartas: ${e.message}")
@@ -88,40 +80,53 @@ class ListApiViewModel : ViewModel() {
         }
     }
 
-    // Get user settings from the database
+    fun getCardById(cardId: String) {
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                val card = repository.getCardById(cardId)
+                selectedCard = card
+            } catch (e: Exception) {
+                selectedCard = null
+                errorMessage = "Error: ${e.message}"
+                Log.e("API", "Error al obtener la carta: ${e.message}")
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
     fun getUserSettings() {
         viewModelScope.launch {
             try {
                 val settings = repository.getUserSettings()
                 settings?.let {
-                    userSettings.value = it
+                    userSettings = it
                 }
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error getting user settings", e)
+                Log.e("ViewModel", "Error obteniendo configuraciones del usuario", e)
             }
         }
     }
-
 
     fun saveUserSettings(settings: UserSettings) {
         viewModelScope.launch {
             try {
                 repository.saveUserSettings(settings)
-                _userSettings.value = settings
+                userSettings = settings
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error saving user settings", e)
+                Log.e("ViewModel", "Error guardando configuraciones del usuario", e)
             }
         }
     }
 
-    // Clear favorites
     fun clearFavorites() {
         viewModelScope.launch {
             try {
                 repository.clearFavorites()
-                Log.d("ViewModel", "Favorites cleared successfully")
+                Log.d("ViewModel", "Favoritos borrados exitosamente")
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error clearing favorites", e)
+                Log.e("ViewModel", "Error borrando favoritos", e)
             }
         }
     }

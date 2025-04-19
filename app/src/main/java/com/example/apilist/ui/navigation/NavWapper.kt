@@ -9,8 +9,7 @@ import com.example.apilist.ui.screens.FavScreen
 import com.example.apilist.ui.screens.ListScreen
 import com.example.apilist.ui.screens.SettingsScreen
 import com.example.apilist.ui.navigation.Destinations.ListScreen
-import com.example.apilist.ui.navigation.Destinations.FavScreen
-import com.example.apilist.ui.navigation.Destinations.SettingsScreen
+import com.example.apilist.ui.screens.DetailScreen
 import com.example.apilist.viewmodel.ListApiViewModel
 
 
@@ -31,7 +30,7 @@ fun NavWrapper(navController: NavHostController, modifier: Modifier, vm: ListApi
         composable("detail_screen/{cardId}") { backStackEntry ->
             val cardId = backStackEntry.arguments?.getString("cardId")
             cardId?.let {
-                DetailScreen(cardId = it, vm = vm)
+                DetailScreen(cardId = it, vm = vm, navigateBack = { navController.popBackStack() })
             }
         }
     }

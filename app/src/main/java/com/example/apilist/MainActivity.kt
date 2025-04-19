@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val vm: ListApiViewModel = viewModel()
-    val userSettings by vm.userSettings  // Obtén la configuración de usuario
+    val userSettings = vm.userSettings  // Obtén la configuración de usuario
 
     if (userSettings == null) {
         // Mostrar un indicador de carga mientras se obtiene la configuración

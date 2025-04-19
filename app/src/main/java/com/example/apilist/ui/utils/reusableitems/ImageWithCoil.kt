@@ -10,7 +10,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 
 @Composable
-fun ImageWithCoil(url: String) {
+fun ImageWithCoil(url: String, modifier: Modifier) {
     val painter =
         rememberAsyncImagePainter(
             ImageRequest.Builder(LocalContext.current).data(data = url).apply(block = fun ImageRequest.Builder.() {
@@ -22,8 +22,8 @@ fun ImageWithCoil(url: String) {
     Image(
         painter = painter,
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
     )
 }

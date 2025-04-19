@@ -29,7 +29,7 @@ import com.example.apilist.ui.utils.getColorFromCard
 import com.example.apilist.ui.utils.getManaIconResource
 
 @Composable
-fun CardItemList(card: Card, settings: UserSettings) {
+fun CardItemList(card: Card, settings: UserSettings, modifier: Modifier) {
     val colorsInCard = getColorFromCard(card.colors, settings.isDarkTheme)
     val gradientBackground = getBackgroundGradient(colorsInCard)
 
@@ -39,7 +39,7 @@ fun CardItemList(card: Card, settings: UserSettings) {
     val textColor = if (averageLuminance < 0.5f) Color.White else Color.Black
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .fillMaxWidth()
             .background(gradientBackground, shape = RoundedCornerShape(16.dp)),

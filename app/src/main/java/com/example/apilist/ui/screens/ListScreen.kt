@@ -1,5 +1,6 @@
 package com.example.apilist.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,14 +48,14 @@ fun ListScreen(vm: ListApiViewModel, navigateToDetail: (String) -> Unit) {
 
         else -> {
             // Display cards
-            CardList(cards, vm)
+            CardList(cards, vm, navigateToDetail)
         }
     }
 }
 
 @Composable
-fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel()) {
-    val settings: UserSettings = vm.userSettings.value!!
+fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel(), navigateToDetail : (String) -> Unit) {
+    val settings: UserSettings = vm.userSettings!!
     Column {
         if (settings.isTextView) {
             LazyColumn(
@@ -62,7 +63,7 @@ fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel()) {
                     .fillMaxSize()
             ) {
                 itemsIndexed(cards) { index, card ->
-                    CardItemList(card, settings)
+                    CardItemList(card, settings, Modifier.clickable { navigateToDetail(card.id) })
 
                     if (index == cards.lastIndex && !vm.isLoading) {
                         LaunchedEffect(Unit) {
@@ -91,7 +92,7 @@ fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel()) {
             ) {
                 itemsIndexed(cards) { index, card ->
                     card.image_uris?.normal?.let {
-                        ImageWithCoil(it)
+                        ImageWithCoil(it, Modifier.clickable { navigateToDetail(card.id) })
                     }
 
                     if (index == cards.lastIndex && !vm.isLoading) {

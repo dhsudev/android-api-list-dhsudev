@@ -19,7 +19,7 @@ import androidx.compose.material.icons.rounded.NightsStay
 @Composable
 fun SettingsScreen(vm: ListApiViewModel) {
     val context = LocalContext.current
-    val settings by vm.userSettings
+    val settings = vm.userSettings
 
     var tempSettings by remember { mutableStateOf(settings ?: UserSettings()) }
 
