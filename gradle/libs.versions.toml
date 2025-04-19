@@ -12,6 +12,7 @@ composeNavigation = "2.8.9"
 serialization = "1.7.3"
 core-splashscreen="1.0.1"
 uiTextGoogleFonts = "1.7.8"
+roomCommonJvm = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,7 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 core-splashscreen={group= "androidx.core",name="core-splashscreen",version.ref="core-splashscreen"}
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 
 
 [plugins]
