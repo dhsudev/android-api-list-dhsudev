@@ -22,7 +22,9 @@ fun NavWrapper(navController: NavHostController, modifier: Modifier, vm: ListApi
             })
         }
         composable<Destinations.FavScreen> {
-            FavScreen(vm)
+            FavScreen(vm, navigateToDetail = { cardId ->
+                navController.navigate("detail_screen/$cardId")
+            })
         }
         composable<Destinations.SettingsScreen> {
             SettingsScreen(vm)

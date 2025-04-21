@@ -2,6 +2,7 @@ package com.example.apilist.ui.screens
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -54,8 +57,8 @@ fun DetailScreen(
     val selectedCard = vm.selectedCard
     val isLoading = vm.isLoading
     val errorMessage = vm.errorMessage
+    val context = LocalContext.current
 
-    // Obtener los detalles de la carta al principio
     LaunchedEffect(cardId) {
         vm.getCardById(cardId)
     }
@@ -93,10 +96,10 @@ fun DetailScreen(
                             .background(gradientBackground, shape = RoundedCornerShape(16.dp)),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Imagen de la carta
+                        /*// Imagen de la carta
                         card.image_uris?.art_crop?.let {
                             ImageWithCoil(card.image_uris.art_crop, Modifier)
-                        }
+                        }*/
 
                         // Información de la carta
                         card.name.let {
@@ -129,7 +132,6 @@ fun DetailScreen(
                             }
                         }
 
-                        // Tipo de la carta
                         card.type_line?.let {
                             Text(
                                 text = it,
@@ -141,7 +143,6 @@ fun DetailScreen(
                         card.oracle_text?.let { it1 -> FormatTextWithIcons(it1, textColor) }
 
 
-                        // Estadísticas (Power/Toughness)
                         if (card.power != null && card.toughness != null) {
                             Text(
                                 text = "${card.power}/${card.toughness}",
@@ -155,18 +156,23 @@ fun DetailScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Botón de favoritos
-                        // Botón de favoritos
                         Button(
                             onClick = {
-                                /*ShowToast(context, "Added to favorites")
-                                // Aquí puedes añadir la lógica para agregar a favoritos*/
+                                vm.toggleFavorite(card)
+                                val message = if (!vm.isFavorite) {
+                                    "Card added to favorites"
+                                } else {
+                                    "Card removed from favorites"
+                                }
+                                Toast.makeText(context, message, LENGTH_SHORT).show()
                             }
                         ) {
-                            Icon(Icons.Default.Favorite, contentDescription = "Favorite")
+                            val icon = if (vm.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                            val tint = if (vm.isFavorite) Color.Red else Color.Gray
+                            Icon(icon, contentDescription = "Favorite", tint = tint)
                         }
                     }
-                } ?: errorMessage?.let {
+                } ?: errorMessage?.let{
                     Text("Error: $it", color = Color.Red)
                 }
             }
@@ -175,9 +181,3 @@ fun DetailScreen(
 }
 
 
-@Composable
-fun ShowToast(context: android.content.Context, message: String) {
-    LaunchedEffect(message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-}

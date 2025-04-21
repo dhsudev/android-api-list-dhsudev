@@ -2,11 +2,9 @@ package com.example.apilist.data.network
 
 import com.example.apilist.CardApplication
 import com.example.apilist.data.database.AppDatabase
-import com.example.apilist.data.database.FavoriteCardDao
-import com.example.apilist.data.database.SettingsDao
 import com.example.apilist.data.model.ScryfallResponse
+import com.example.apilist.data.model.local.FavoriteCard
 import com.example.apilist.data.model.local.UserSettings
-import retrofit2.Response
 
 class Repository(){
     private val database: AppDatabase = CardApplication.database
@@ -55,5 +53,19 @@ class Repository(){
         favoriteCardDao.clearFavorites()
     }
 
+    suspend fun addFavorite(card : FavoriteCard) {
+        favoriteCardDao.insertFavorite(card)
+    }
 
+    suspend fun removeFavorite(card : FavoriteCard){
+        favoriteCardDao.deleteFavorite(card)
+    }
+
+    suspend fun isFavorite(id: String): Boolean {
+        return favoriteCardDao.isFavorite(id)
+    }
+
+    suspend fun getFavorites(): List<FavoriteCard> {
+        return favoriteCardDao.getAllFavorites()
+    }
 }

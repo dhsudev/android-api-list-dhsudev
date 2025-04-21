@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +33,11 @@ fun ListScreen(vm: ListApiViewModel, navigateToDetail: (String) -> Unit) {
     val cards = vm.cardList
     val isLoading = vm.isLoading
     val error = vm.errorMessage
+
+    LaunchedEffect(Unit) {
+        if(cards.isEmpty() || vm.isFavLoaded)
+            vm.fetchAllCards()
+    }
     when {
         isLoading && cards.isEmpty() -> {
             // Loading first cards
@@ -48,13 +55,13 @@ fun ListScreen(vm: ListApiViewModel, navigateToDetail: (String) -> Unit) {
 
         else -> {
             // Display cards
-            CardList(cards, vm, navigateToDetail)
+            CardList(cards, vm, false, navigateToDetail)
         }
     }
 }
 
 @Composable
-fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel(), navigateToDetail : (String) -> Unit) {
+fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel(), isFavScreen : Boolean, navigateToDetail : (String) -> Unit) {
     val settings: UserSettings = vm.userSettings!!
     Column {
         if (settings.isTextView) {
@@ -65,7 +72,7 @@ fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel(), navigateToDe
                 itemsIndexed(cards) { index, card ->
                     CardItemList(card, settings, Modifier.clickable { navigateToDetail(card.id) })
 
-                    if (index == cards.lastIndex && !vm.isLoading) {
+                    if (index == cards.lastIndex && !vm.isLoading && !isFavScreen) {
                         LaunchedEffect(Unit) {
                             vm.getMoreCards()
                         }
@@ -95,7 +102,7 @@ fun CardList(cards: List<Card>, vm: ListApiViewModel = viewModel(), navigateToDe
                         ImageWithCoil(it, Modifier.clickable { navigateToDetail(card.id) })
                     }
 
-                    if (index == cards.lastIndex && !vm.isLoading) {
+                    if (index == cards.lastIndex && !vm.isLoading && !isFavScreen) {
                         LaunchedEffect(Unit) {
                             vm.getMoreCards()
                         }

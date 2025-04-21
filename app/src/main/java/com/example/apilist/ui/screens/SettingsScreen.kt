@@ -27,12 +27,12 @@ fun SettingsScreen(vm: ListApiViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text("Settings", style = MaterialTheme.typography.titleLarge)
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
 
         // Theme toggle
         Row(verticalAlignment = Alignment.CenterVertically) {
