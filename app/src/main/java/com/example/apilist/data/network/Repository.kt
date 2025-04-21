@@ -1,7 +1,9 @@
 package com.example.apilist.data.network
 
+import android.util.Log
 import com.example.apilist.CardApplication
 import com.example.apilist.data.database.AppDatabase
+import com.example.apilist.data.model.Card
 import com.example.apilist.data.model.ScryfallResponse
 import com.example.apilist.data.model.local.FavoriteCard
 import com.example.apilist.data.model.local.UserSettings
@@ -20,8 +22,25 @@ class Repository(){
     }
 
     suspend fun getCardById(cardId: String) = api.getCardById(cardId)
-    suspend fun autocomplete(name: String) = api.autocomplete(name)
-    suspend fun buildSearchQuery(
+    suspend fun getAutocompleteSuggestions(query: String): List<String> {
+        return try {
+            val response = api.autocomplete(query)
+            response.data
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+    suspend fun getCardByExactName(name: String): Card? {
+        return try {
+            api.getCardByName(name)
+        } catch (e: Exception) {
+            Log.e("Repository", "Error fetching card by name", e)
+            null
+        }
+    }
+
+   /* It was suposed to be for filters
+   suspend fun buildSearchQuery(
         name: String?,
         type: String?,
         color: String?,
@@ -35,7 +54,7 @@ class Repository(){
         power?.let { queryParts.add("power:$it") }
 
         return api.searchCards(queryParts.joinToString("+"))
-    }
+    }*/
 
     // ############## LOCAL STORAGE
 

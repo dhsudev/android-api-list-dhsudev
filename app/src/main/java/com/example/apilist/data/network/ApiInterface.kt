@@ -26,6 +26,8 @@ interface ApiInterface {
 
     @GET("cards/autocomplete")
     suspend fun autocomplete(@Query("q") query: String): AutocompleteResponse
+    @GET("cards/named")
+    suspend fun getCardByName(@Query("exact") name: String): Card
 
     @GET
     suspend fun getMoreCards(@Url nextPageUrl: String): ScryfallResponse

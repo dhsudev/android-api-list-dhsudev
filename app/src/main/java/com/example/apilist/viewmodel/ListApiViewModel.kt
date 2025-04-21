@@ -43,11 +43,12 @@ class ListApiViewModel : ViewModel() {
         Log.d("ViewModel", "ViewModel initialized")
     }
 
-    public fun fetchAllCards() {
+    fun fetchAllCards() {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
             try {
+                cardList = emptyList()
                 val response = repository.getAllCards()
                 Log.d("API", "First page fetched, recived cards: ${response.data.size}")
                 cardList = response.data
@@ -171,6 +172,7 @@ class ListApiViewModel : ViewModel() {
         viewModelScope.launch {
             errorMessage = null
             try {
+                cardList = emptyList()
                 val favCards = repository.getFavorites()
                 Log.d("API", "Favorites fetched, recived cards: ${favCards}")
                 cardList = favCards.map { it.toCard() }
@@ -182,4 +184,36 @@ class ListApiViewModel : ViewModel() {
             }
         }
     }
+
+    var searchQuery by mutableStateOf("")
+    var searchSuggestions by mutableStateOf<List<String>>(emptyList())
+
+    fun onSearchQueryChanged(query: String) {
+        searchQuery = query
+        viewModelScope.launch {
+            try {
+                Log.d("Search", "Query changed: $query")
+                val results = repository.getAutocompleteSuggestions(query)
+                searchSuggestions = results
+                Log.d("Search", "Suggestions: $results")
+            } catch (e: Exception) {
+                Log.e("Search", "Error fetching suggestions", e)
+                searchSuggestions = emptyList()
+            }
+        }
+    }
+    fun onSuggestionClicked(name: String, navigateToDetail: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                Log.d("Search", "Suggestion clicked: $name")
+                val card = repository.getCardByExactName(name)
+                card?.let {
+                    navigateToDetail(it.id)
+                } ?: Log.e("Search", "Card not found for name: $name")
+            } catch (e: Exception) {
+                Log.e("Search", "Error getting card details", e)
+            }
+        }
+    }
+
 }

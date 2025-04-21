@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -44,6 +45,7 @@ import com.example.apilist.ui.utils.getColorFromCard
 import com.example.apilist.ui.utils.getManaIconResource
 import com.example.apilist.ui.utils.reusableitems.ImageWithCoil
 import com.example.apilist.viewmodel.ListApiViewModel
+import androidx.compose.foundation.rememberScrollState
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -88,18 +90,19 @@ fun DetailScreen(
                         .map { it.luminance() }
                         .average()
                     val textColor = if (averageLuminance < 0.5f) Color.White else Color.Black
-
+                    val scrollState = rememberScrollState()
                     Column(
                         modifier = Modifier
                             .padding(10.dp)
                             .fillMaxWidth()
-                            .background(gradientBackground, shape = RoundedCornerShape(16.dp)),
+                            .background(gradientBackground, shape = RoundedCornerShape(16.dp))
+                            .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        /*// Imagen de la carta
+                        // Imagen de la carta
                         card.image_uris?.art_crop?.let {
                             ImageWithCoil(card.image_uris.art_crop, Modifier)
-                        }*/
+                        }
 
                         // Información de la carta
                         card.name.let {
@@ -157,6 +160,7 @@ fun DetailScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                             onClick = {
                                 vm.toggleFavorite(card)
                                 val message = if (!vm.isFavorite) {

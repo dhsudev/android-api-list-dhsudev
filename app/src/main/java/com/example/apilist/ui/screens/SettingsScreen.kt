@@ -10,24 +10,27 @@ import androidx.compose.ui.unit.dp
 import com.example.apilist.viewmodel.ListApiViewModel
 import com.example.apilist.data.model.local.UserSettings
 import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Nightlight
-import androidx.compose.material.icons.rounded.NightsStay
 
 
 @Composable
 fun SettingsScreen(vm: ListApiViewModel) {
-    val context = LocalContext.current
     val settings = vm.userSettings
 
     var tempSettings by remember { mutableStateOf(settings ?: UserSettings()) }
-
-
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(10.dp)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text("Settings", style = MaterialTheme.typography.titleLarge)
@@ -116,6 +119,7 @@ fun SettingsScreen(vm: ListApiViewModel) {
         Button(onClick = {
             vm.saveUserSettings(tempSettings)
             Log.d("SettingsScreen", "Settings saved: $tempSettings")
+            Toast.makeText(context, "Settings saved", LENGTH_SHORT).show()
         }) {
             Text("Save Settings")
         }
@@ -125,6 +129,7 @@ fun SettingsScreen(vm: ListApiViewModel) {
         Button(onClick = {
             vm.clearFavorites()
             Log.d("SettingsScreen", "Favorites cleared")
+            Toast.makeText(context, "Favorites cleared", LENGTH_SHORT).show()
         }) {
             Text("Clear Favorites")
         }
